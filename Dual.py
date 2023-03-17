@@ -26,17 +26,18 @@ class D():
         return this.trace_unary(this.ad.primitives.pow)
 
     def trace_binary(this,op,that): 
-        return this.ad.trace(op.do_apply(this,that), lambda z:  op.lin(z,this,that))
+        return trace_op( this.ad, op.do_apply(this,that), lambda z:  op.lin(z,this,that))
 
     def trace_unary(this,op):
-        return this.ad.trace(op.do_apply(this), lambda z:  op.lin(z,this))
-
-    def trace_op(ad,v,c):
-        ad.trace(lambda : c(v))
-        return v
+        return trace_op( this.ad, op.do_apply(this), lambda z:  op.lin(z,this))
 
 
     def __str__(self): return(f'D({self.p},{self.t})')
+
+def trace_op(ad,v,c):
+    ad.trace(lambda : c(v))
+    return v
+
 
 def sin(this): return this.trace_unary(this.ad.primitives.sin)
 def cos(this): return this.trace_unary(this.ad.primitives.cos)

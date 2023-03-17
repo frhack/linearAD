@@ -22,22 +22,3 @@ class Tape:
         obj.list.reverse()
         return obj
 
-
-
-#t = Tape([1])
-#t.append(2)
-#t.append(3)
-#print(t.list)
-#t = Tape([])
-#t = t.get_transpose()
-#t.append(1)
-#t.append(2)
-#t.append(3)
-#print(t.list)
-#t = Tape([])
-#t = t.get_transpose()
-#t = t.get_transpose()
-#t.append(1)
-#t.append(2)
-#t.append(3)
-#print(t.list)

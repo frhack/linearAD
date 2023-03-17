@@ -15,9 +15,8 @@ class ADl:
         this.primitives = None
         this.mutated = []
 
-    def trace(this, value, closure):
-        this.tape.append( lambda: closure(value) )
-        return value
+    def trace(this, closure):
+        this.tape.append( closure )
 
     def propagate(this):
         this.clear_linear()
@@ -66,9 +65,8 @@ class AD_F(ADl):
         this.tape = Tape(this.direction)
         this.primitives = Primitives(this.direction)
 
-    def trace(this, value, closure):
-        closure(value)
-        return value
+    def trace(this, closure):
+        closure()
 
 class ADl_B(ADl_F):
     def __init__(this, *args, **kwargs):
