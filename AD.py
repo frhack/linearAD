@@ -3,10 +3,6 @@ from PrimitivesMath import *
 from PrimitivesSympy import *
 from Tape import *
 from Dual import *
-import math
-#import Dual
-#from sympy import *
-#from sympy import symbols, diff, Symbol, lambdify
 
 class ADl:
     def __init__(this):
