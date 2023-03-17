@@ -17,8 +17,6 @@ class D():
 
     def __truediv__(this, that): return this.trace_binary(this.ad.primitives.div,that)
 
-    def __cos(this, that): return this.trace_unary(this.ad.primitives.cos)
-
     def __pow__(this, that):
         this.ad.primitives.pow.params[0] = that
         return this.trace_unary(this.ad.primitives.pow)

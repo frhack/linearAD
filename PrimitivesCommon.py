@@ -58,11 +58,11 @@ class Primitive:
            dsx = diff(y, ssx)
            if (self.__class__.show_jrow and not showed_jrow.get(self.__class__.__name__, False)):
                print(dsx, " )")
-           if (self.__class__.show_jrow and not showed_jrow.get(self.__class__.__name__, False)):
-               showed_jrow[self.__class__.__name__] = True 
 
            ddx = lambdify(s, dsx) 
            self.jrow.append(ddx)
+        if (self.__class__.show_jrow and not showed_jrow.get(self.__class__.__name__, False)):
+           showed_jrow[self.__class__.__name__] = True 
 
 
 

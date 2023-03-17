@@ -72,9 +72,9 @@ def test_wang(mode):
     f = lambda x1, x2: tanh(x2*(x1+x2))
     y = f(x1,x2)
     ad.propagate_from_to(* ad.get_from_to(x1,y))
-    print("derivative wrt x of lambda x, y: x*y*y + y*x  at x y = 2 3: ",ad.get_from_to(y.t,x1.t)[0] )
+    print("derivative wrt x of lambda x, y: x*y*y + y*x  at x y = 2 3: ",ad.get_from_to(x1.t,y.t)[1])
     ad.propagate_from_to(* ad.get_from_to(x2,y))
-    print("derivative wrt y of lambda x, y: x*y*y + y*x  at y y = 2 3: ", ad.get_from_to(y.t,x2.t)[0])
+    print("derivative wrt y of lambda x, y: x*y*y + y*x  at y y = 2 3: ", ad.get_from_to(x2.t,y.t)[1])
 
 
 
