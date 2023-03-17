@@ -43,4 +43,3 @@ class Pow(Unary):
         p = self.params
         self.jrow.append( lambda x1: p[0]*x1**(p[0]-1))
 
-

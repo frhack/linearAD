@@ -1,4 +1,3 @@
-
 showed_jrow = {} 
 
 class Primitives:

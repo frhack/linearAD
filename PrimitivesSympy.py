@@ -46,4 +46,3 @@ class Pow(Unary):
 #n.params[0] = 3
 #print(n.apply(2))
 #print(n.jrow[0](2))
-
