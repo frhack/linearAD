@@ -1,13 +1,6 @@
 import math
 from PrimitivesCommon import *
 
-
-#class Cos(Unary):
-    #def apply(self,x1): return math.cos(x1)
-#
-    #def set_jrow(self):
-        #self.jrow.append( lambda x1: -math.sin(x1))
-
 class Sin(Unary):
     def apply(self,x1): return math.sin(x1)
 
