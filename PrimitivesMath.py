@@ -14,21 +14,19 @@ class Sin(Unary):
     def set_jrow(self):
         self.jrow.append( lambda x1: -math.sin(x1))
 
+class Sub(Binary):
+    def apply(self,x1,x2): return x1 + x2 
+
+    def set_jrow(self):
+        self.jrow.append( lambda x1,x2: 1)
+        self.jrow.append( lambda x1,x2: -1)
+
 class Sum(Binary):
     def apply(self,x1,x2): return x1 + x2 
 
     def set_jrow(self):
         self.jrow.append( lambda x1,x2: 1)
         self.jrow.append( lambda x1,x2: 1)
-
-class Sub(Binary):
-    def apply(self,x1,x2): return x1 - x2 
-
-class Div(Binary):
-    def apply(self,x1,x2): return x1 / x2 
-
-class Mul(Binary):
-    def apply(self,x1,x2): return x1 * x2 
 
 class Pow(Unary):
     def __init__(self):
