@@ -5,7 +5,7 @@ class Sin(Unary):
     def apply(self,x1): return math.sin(x1)
 
     def set_jrow(self):
-        self.jrow.append( lambda x1: -math.sin(x1))
+        self.jrow.append( lambda x1: math.cos(x1))
 
 class Sub(Binary):
     def apply(self,x1,x2): return x1 + x2 

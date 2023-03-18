@@ -2,6 +2,9 @@ from AD import *
 import math
 
 
+def eq(x,y):
+    abs(x-y) < 1/100000000
+
 def getAD(mode):
     if (mode == "F"):
         return AD_F()
@@ -12,16 +15,20 @@ def getAD(mode):
 
 def test1(mode):
     ad = getAD(mode)
-    print("derivative of y=x*x*x at x=3:",ad.derivative(lambda x: x+x+x, 3))
-    print("derivative of y=x+x - x*x*x at x=3:",ad.derivative(lambda x: x+x - x*x*x, 3))
-    print("derivative of y=x+x + x**3 at x=3:",ad.derivative(lambda x: x+x + x**3, 3))
-    print("derivative of sin(x) x=pi:",ad.derivative(lambda x: sin(x), math.pi))
-    print("derivative of cos(x) x=pi:",ad.derivative(lambda x: cos(x), math.pi))
+    name = "test1"
+    descr = f'test {name} mode {mode} failed '
+    assert ad.derivative(lambda x: x+x+x, 3)==3, descr 
+    assert ad.derivative(lambda x: x+x - x*x*x, 3) == -25,  descr 
+    assert ad.derivative(lambda x: x+x - x**3, 3) == -25,  descr 
+    assert ad.derivative(lambda x: x+x + x*x*x, 3) == 29,  descr 
+    assert ad.derivative(lambda x: sin(x), math.pi) == -1,  descr
+    assert ad.derivative(lambda x: cos(x), math.pi)**2 < 1/1000000,  descr
 
 
 def test_algorythm(mode):
     ad = getAD(mode)
-    print("direction:",ad.direction)
+    name = "test_algorythm"
+    descr = f'test {name} mode {mode} failed '
     (x, ONE, TWO,THREE, FOUR) = (ad.D(3), ad.D(1), ad.D(2), ad.D(3), ad.D(4) )
     def babylon(x):
         t = (ONE+x)/TWO
@@ -30,8 +37,9 @@ def test_algorythm(mode):
         return t
 
     babylon_d = ad.derive(babylon)
-    print("derivative of sqrt at 2: ", babylon_d(2))
-    print("derivative of sqrt at 4: ", babylon_d(4))
+    
+    assert babylon_d(2) == 0.35355339059327373  ,  descr
+    assert babylon_d(4) == 0.25  ,  descr
 
 def test_algorythm_linear_forwad():
     ad = getAD("l_F")
@@ -46,14 +54,23 @@ def test_algorythm_linear_forwad():
     x.p = 2
     ad.propagate_from_to(* ad.get_from_to(x,y))
     print("derivative wrt x of lambda x, y: x*y*y + y*x  at x y = 2 3: ",ad.get_from_to(y.t,x.t)[0] )
+    #assert babylon_d(2) == 0.35355339059327373  ,  descr
+    #assert babylon_d(4) == 0.25  ,  descr
     print(y.t)
+    ad.clear()
     x.p = 4 
+    y = babylon(x)
     ad.propagate_from_to(x,y)
+    #assert babylon_d(2) == 0.35355339059327373  ,  descr
+    #assert babylon_d(4) == 0.25  ,  descr
     print("derivative wrt x of lambda x, y: x*y*y + y*x  at x y = 2 3: oooo",y.t )
 
 def test_algorythm_F():
-    ad = getAD("F")
-    (x, ONE, TWO,THREE, FOUR) = (ad.D(3), ad.D(1), ad.D(2), ad.D(3), ad.D(4) )
+    mode = "F"
+    ad = getAD(mode)
+    name = "test_algorythm"
+    descr = f'test {name} mode {mode} failed '
+    (x, ONE, TWO) = (ad.D(0), ad.D(1), ad.D(2))
     def babylon(x):
         t = (ONE+x)/TWO
         for i in range(0,100):
@@ -63,15 +80,11 @@ def test_algorythm_F():
     x.p = 2 
     x.t = 1
     y = babylon(x)
-    #ad.propagate()
-    print("derivative of sqrt at 2: ", y.t)
-    #ad.clear()
+    assert y.t == 0.35355339059327373  ,  descr
     x.p = 4
     x.t = 1
     y = babylon(x)
-    #ad.propagate()
-    print("derivative of sqrt at 4: ", y.t)
-    ad.clear()
+    assert y.t == 0.25  ,  descr
 
 def test_partial1(mode):
     ad = getAD(mode)
@@ -86,12 +99,39 @@ def test_partial1(mode):
 
 def test_wang(mode):
     ad = getAD(mode)
+    name = "test_wang"
+    descr = f'test {name} mode {mode} failed '
+    (x1, x2) = (ad.D(0.5), ad.D(0.4) )
+    f = lambda x1, x2: tanh(x2*(x1+x2))
+    y = f(x1,x2)
+    ad.propagate_from_to(* ad.get_from_to(x1,y))
+    assert ad.get_from_to(x1.t,y.t)[1]==0.35233090825435176, descr 
+    ad.clear()
+    y.t = 0
+    x1.t = 0
+    x2.t = 0
+    y = f(x1,x2)
+    ad.propagate_from_to(* ad.get_from_to(x2,y))
+    assert ad.get_from_to(x2.t,y.t)[1]==1.1450754518266433, descr 
+
+def test_wang_linear_forward():
+    ad = getAD("l_F")
     (x1, x2) = (ad.D(0.5), ad.D(0.4) )
     f = lambda x1, x2: tanh(x2*(x1+x2))
     y = f(x1,x2)
     ad.propagate_from_to(* ad.get_from_to(x1,y))
     print("derivative wrt x of lambda x, y: x*y*y + y*x  at x y = 2 3: ",ad.get_from_to(x1.t,y.t)[1])
     ad.propagate_from_to(* ad.get_from_to(x2,y))
+    print("derivative wrt y of lambda x, y: x*y*y + y*x  at y y = 2 3: ", ad.get_from_to(x2.t,y.t)[1])
+
+def test_wang_backward():
+    ad = getAD("l_B")
+    (x1, x2) = (ad.D(0.5), ad.D(0.4) )
+    f = lambda x1, x2: tanh(x2*(x1+x2))
+    y = f(x1,x2)
+    ad.propagate_from_to(* ad.get_from_to(x1,y))
+    print("derivative wrt x of lambda x, y: x*y*y + y*x  at x y = 2 3: ",ad.get_from_to(x1.t,y.t)[1])
+    #ad.propagate_from_to(* ad.get_from_to(x2,y))
     print("derivative wrt y of lambda x, y: x*y*y + y*x  at y y = 2 3: ", ad.get_from_to(x2.t,y.t)[1])
 
 def test_transpose():
@@ -170,10 +210,12 @@ def test_partial3(mode):
 
 def test_code(mode):
     ad = getAD(mode)
+    name = "test1"
+    descr = f'test {name} mode {mode} failed '
     (x, ONE, TWO,THREE, FOUR) = (ad.D(3), ad.D(1), ad.D(2), ad.D(3), ad.D(4) )
     f = lambda x: ONE if x.p == 1 else x*x
-    print("derivative of if  x=1:",ad.derivative(f, 2))
-    print("derivative of if  x=1:",ad.derivative(f, 4))
+    assert ad.derivative(f,1)==0, descr 
+    assert ad.derivative(f,2)==4, descr 
 
 
 test1("l_F")
@@ -181,16 +223,20 @@ test1("l_B")
 test_algorythm("l_F")
 test_algorythm("l_B")
 test_algorythm_F()
+#test_algorythm("F")
 test_code("l_F")
 test_code("l_B")
-test_partial("l_F")
-test_partial("l_B")
-test_partial2("l_F")
-test_partial3("F")
+#test_partial("l_F")
+#test_partial("l_B")
+#test_partial2("l_F")
+#test_partial3("F")
 test_wang("l_B")
 test_wang("l_F")
+#test_wang("F")
      #test_partial3("l_B")
-test_partial1("l_F")
-test_partial1("l_B")
-test_transpose()
+#test_partial1("l_F")
+#test_partial1("l_B")
+#test_transpose()
+#test_wang_linear_forward()
+#test_wang_backward()
 #test_algorythm_linear_forwad()

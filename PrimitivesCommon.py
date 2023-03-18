@@ -70,10 +70,8 @@ class Primitive:
         for x,t in zip(xs,ts):
             if(direction):
                z.t += x.t * t 
-               z.ad.mutated.append(z)
             else:
                x.t += z.t * t 
-               x.ad.mutated.append(x)
 
     def get_lin(self,z,*xs):
         ts = []

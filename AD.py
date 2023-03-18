@@ -9,29 +9,17 @@ class ADl:
         this.direction = None 
         this.tape = None
         this.primitives = Primitives()
-        this.mutated = []
 
     def trace(this, closure): this.tape.append( closure )
 
     def propagate(this):
-        this.clear_linear()
         for closure in this.tape.list: closure()
 
-    def clear_linear(this):
-        for x in this.mutated: x.t = 0
-        this.mutated = []
-
-    def clear(this):
-        this.clear_linear()
-        this.tape.clear()
-
-    def D(this,x): return D(x,this)
+    def clear(this): this.tape.clear()
 
     def propagate_from_to(this,fromvar,tovar):
-        this.clear_linear()
         fromvar.t = 1
         for closure in this.tape.list: closure()
-        fromvar.t = 0
         return tovar.t
 
     def derive(this,f): return lambda x: this.derivative(f,x)
@@ -44,6 +32,9 @@ class ADl:
 
     def get_from_to(this,a,b): return (a,b) if this.direction else (b,a)
 
+    def D(this,x): return D(x,this)
+
+
 class ADl_F(ADl):
     def __init__(this):
         super(ADl_F, this).__init__()
@@ -54,7 +45,7 @@ class AD_F(ADl):
     def __init__(this):
         super(AD_F, this).__init__()
         this.direction = True;
-        this.tape = Tape(this.direction)
+        #this.tape = Tape(this.direction)
 
     def trace(this, closure): 
         closure()
