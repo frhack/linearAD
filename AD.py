@@ -15,8 +15,7 @@ class ADl:
 
     def propagate(this):
         this.clear_linear()
-        for closure in this.tape.list: 
-            closure()
+        for closure in this.tape.list: closure()
 
     def clear_linear(this):
         for x in this.mutated: x.t = 0
