@@ -1,9 +1,8 @@
 showed_jrow = {} 
 
 class Primitives:
-    def __init__(self, direction = True): 
+    def __init__(self): 
         self.list = []
-        self.direction = direction 
         self.set_primitives()
  
     def set_primitives(self):
@@ -19,23 +18,14 @@ class Primitives:
 
 
     def set(self,t, show_jrow = True):
-        if(not self.direction):
-            t = t.get_transpose()
         self.list.append(t)
         t.__class__.show_jrow = show_jrow
         t.set_jrow()
         return t 
 
-    def get_transpose(self):
-        np = Primitives(not self.direction)
-        for p in self.list:
-            np.set(p.get_transpose(),p.show_jrow)
-        return np
-    
 
 class Primitive:
     def __init__(this): 
-        this.direction = True
         this.jrow = []
         show_jrow = False
 
@@ -75,26 +65,26 @@ class Primitive:
     def apply(this,*x):
         pass
 
-    def lin(self,z,*xs):
-        ts = []
-        xp = []
-        for x in xs:
-            xp.append(x.p)
-        for j in self.jrow:
-            ts.append(j(*xp))
+    def do_lin(this,z,xs,ts):
+        direction = xs[0].ad.direction
         for x,t in zip(xs,ts):
-            if(self.direction):
+            if(direction):
                z.t += x.t * t 
                z.ad.mutated.append(z)
             else:
                x.t += z.t * t 
                x.ad.mutated.append(x)
 
+    def get_lin(self,z,*xs):
+        ts = []
+        xp = []
+        direction = xs[0].ad.direction
+        for x in xs:
+            xp.append(x.p)
+        for j in self.jrow:
+            ts.append(j(*xp))
+        return lambda: self.do_lin(z,xs,ts)
 
-    def get_transpose(this):
-        obj =  type(this)()
-        obj.direction = not this.direction
-        return obj 
 
 class Unary(Primitive):
 

@@ -8,14 +8,15 @@ class ADl:
     def __init__(this):
         this.direction = None 
         this.tape = None
-        this.primitives = None
+        this.primitives = Primitives()
         this.mutated = []
 
     def trace(this, closure): this.tape.append( closure )
 
     def propagate(this):
         this.clear_linear()
-        for closure in this.tape.list: closure()
+        for closure in this.tape.list: 
+            closure()
 
     def clear_linear(this):
         for x in this.mutated: x.t = 0
@@ -49,22 +50,27 @@ class ADl_F(ADl):
         super(ADl_F, this).__init__()
         this.direction = True;
         this.tape = Tape(this.direction)
-        this.primitives = Primitives(this.direction)
 
 class AD_F(ADl):
     def __init__(this):
         super(AD_F, this).__init__()
         this.direction = True;
         this.tape = Tape(this.direction)
-        this.primitives = Primitives(this.direction)
 
-    def trace(this, closure): closure()
+    def trace(this, closure): 
+        closure()
 
 class ADl_B(ADl_F):
     def __init__(this, *args, **kwargs):
         super(ADl_B, this).__init__(*args, **kwargs)
         this.direction = not this.direction  # invert the direction
         this.tape = this.tape.get_transpose()
-        this.primitives = this.primitives.get_transpose()
 
     #def get_from_to(this,a,b): return (b,a)
+def transpose(this):
+    transposed = type(this)() # make a clone
+    transposed.direction = not this.direction 
+    transposed.tape = Tape(not this.direction)
+    return transposed
+
+

@@ -33,6 +33,24 @@ def test_algorythm(mode):
     print("derivative of sqrt at 2: ", babylon_d(2))
     print("derivative of sqrt at 4: ", babylon_d(4))
 
+def test_algorythm_linear_forwad():
+    ad = getAD("l_F")
+    (x, ONE, TWO,THREE, FOUR) = (ad.D(2), ad.D(1), ad.D(2), ad.D(3), ad.D(4) )
+    def babylon(x):
+        t = (ONE+x)/TWO
+        for i in range(0,100):
+            t = (t + x / t) / TWO 
+        return t
+
+    y = babylon(x)
+    x.p = 2
+    ad.propagate_from_to(* ad.get_from_to(x,y))
+    print("derivative wrt x of lambda x, y: x*y*y + y*x  at x y = 2 3: ",ad.get_from_to(y.t,x.t)[0] )
+    print(y.t)
+    x.p = 4 
+    ad.propagate_from_to(x,y)
+    print("derivative wrt x of lambda x, y: x*y*y + y*x  at x y = 2 3: oooo",y.t )
+
 def test_algorythm_F():
     ad = getAD("F")
     (x, ONE, TWO,THREE, FOUR) = (ad.D(3), ad.D(1), ad.D(2), ad.D(3), ad.D(4) )
@@ -75,6 +93,37 @@ def test_wang(mode):
     print("derivative wrt x of lambda x, y: x*y*y + y*x  at x y = 2 3: ",ad.get_from_to(x1.t,y.t)[1])
     ad.propagate_from_to(* ad.get_from_to(x2,y))
     print("derivative wrt y of lambda x, y: x*y*y + y*x  at y y = 2 3: ", ad.get_from_to(x2.t,y.t)[1])
+
+def test_transpose():
+    ad = getAD("l_F")
+    (x1, x2) = (ad.D(0.5), ad.D(0.4) )
+    f = lambda x1, x2: tanh(x2*(x1+x2))
+    y = f(x1,x2)
+    ad.propagate_from_to(* ad.get_from_to(x1,y))
+    print("derivative wrt x of lambda x, y: x*y*y + y*x  at x y = 2 3: ",ad.get_from_to(x1.t,y.t)[1])
+    ad.propagate_from_to(* ad.get_from_to(x2,y))
+    print("derivative wrt y of lambda x, y: x*y*y + y*x  at y y = 2 3: ", ad.get_from_to(x2.t,y.t)[1])
+
+    ad = transpose(ad)
+    (x1, x2) = (ad.D(0.5), ad.D(0.4) )
+    f = lambda x1, x2: tanh(x2*(x1+x2))
+    y = f(x1,x2)
+    ad.propagate_from_to(* ad.get_from_to(x1,y))
+    print("derivative wrt x of lambda x, y: x*y*y + y*x  at x y = 2 3: ",ad.get_from_to(x1.t,y.t)[1])
+    ad.propagate_from_to(* ad.get_from_to(x2,y))
+    print("derivative wrt y of lambda x, y: x*y*y + y*x  at y y = 2 3: ", ad.get_from_to(x2.t,y.t)[1])
+
+    ad = transpose(ad)
+    (x1, x2) = (ad.D(0.5), ad.D(0.4) )
+    f = lambda x1, x2: tanh(x2*(x1+x2))
+    y = f(x1,x2)
+    ad.propagate_from_to(* ad.get_from_to(x1,y))
+    print("derivative wrt x of lambda x, y: x*y*y + y*x  at x y = 2 3: ",ad.get_from_to(x1.t,y.t)[1])
+    ad.propagate_from_to(* ad.get_from_to(x2,y))
+    print("derivative wrt y of lambda x, y: x*y*y + y*x  at y y = 2 3: ", ad.get_from_to(x2.t,y.t)[1])
+
+
+
 
 
 
@@ -143,4 +192,5 @@ test_wang("l_F")
      #test_partial3("l_B")
 test_partial1("l_F")
 test_partial1("l_B")
-
+test_transpose()
+#test_algorythm_linear_forwad()
