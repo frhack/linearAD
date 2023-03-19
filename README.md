@@ -109,7 +109,7 @@ class Pow(Unary):
         self.jrow.append( lambda x1: p[0]*x1**(p[0]-1))
 ```
 
-## Primitives autodiscovery
+## Primitives derivatives autodiscovery
 
 ```python 
 
