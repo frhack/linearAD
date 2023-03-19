@@ -1,5 +1,9 @@
 # linearAD
-Automatic Differentiation library 
+## Automatic Differentiation library 
+
+- forward mode: the classic foward mode AD
+- linearized reverse mode: reverse mode AD, with non linear foward pass and linear backward pass. Here the backward pass is a chain of linear closure (aka propagate pass)
+- linearized forward mode: two step like reverse mode, forward pass a non linear computation and propagate pass  a chain of linear closures 
 
 
 Example usage:
