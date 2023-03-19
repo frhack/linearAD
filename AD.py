@@ -33,7 +33,6 @@ class ADl:
 
     def D(this,x): return D(x,this)
 
-
 class ADl_F(ADl):
     def __init__(this):
         super(ADl_F, this).__init__()
@@ -44,7 +43,6 @@ class AD_F(ADl):
     def __init__(this):
         super(AD_F, this).__init__()
         this.direction = True;
-        #this.tape = Tape(this.direction)
 
     def trace(this, closure): 
         closure()
@@ -54,5 +52,3 @@ class ADl_B(ADl_F):
         super(ADl_B, this).__init__(*args, **kwargs)
         this.direction = not this.direction  # invert the direction
         this.tape = Tape(this.direction)
-
-
