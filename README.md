@@ -31,7 +31,7 @@ assert x.t == 1/4  ,  descr  # derivative of square root at 4
 ```
 
 
-## Forward
+## Linear Forward
 ```python 
 mode = "l_F"
 ad = ADl_F() # backward 
@@ -54,7 +54,7 @@ assert y.t == 1/4  ,  descr  # derivative of square root at 4
 ```
 
 
-## Linear Forward
+## Forward
 ```python 
 mode = "F"
 ad = AD_F() # backward 
