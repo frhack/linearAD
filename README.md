@@ -3,7 +3,7 @@
 
 - forward mode: the classic foward mode AD
 - linearized reverse mode: reverse mode AD, with a non linear foward pass and a linear backward pass. Here the backward pass is a chain of linear closures aka *propagate pass*
-- linearized forward mode: two step like reverse mode, forward pass, a non linear computation, and *propagate pass*, a chain of linear closures 
+- linearized forward mode: two step like reverse mode, a forward pass, and a linear pass aka *propagate pass*, a chain of linear closures 
 
 
 Example usage:
