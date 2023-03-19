@@ -8,7 +8,7 @@
 
 Example usage:
 
-
+## Backward
 ```python 
 mode = "l_B"
 ad = ADl_B() # backward 
@@ -28,8 +28,11 @@ y.t = 1
 ad.propagate()
 assert y.p == 2  ,  descr    # square root of 4
 assert x.t == 1/4  ,  descr  # derivative of square root at 4 
+```
 
 
+## Forward
+```python 
 mode = "l_F"
 ad = ADl_F() # backward 
 name = "test_algorythm_linear_forward"
@@ -48,8 +51,11 @@ x.t = 1
 ad.propagate()
 assert y.p == 2  ,  descr    # square root of 4
 assert y.t == 1/4  ,  descr  # derivative of square root at 4 
+```
 
 
+## Linear Forward
+```python 
 mode = "F"
 ad = AD_F() # backward 
 name = "test_algorythm_forward"
