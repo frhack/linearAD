@@ -3,7 +3,6 @@ from PrimitivesMath import *
 from PrimitivesSympy import *
 
 class D():
-
     def __init__(self, x, ad):
         self.p = x 
         self.t = 0 

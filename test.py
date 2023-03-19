@@ -41,6 +41,25 @@ def test_algorythm(mode):
     assert babylon_d(2) == 0.35355339059327373  ,  descr
     assert babylon_d(4) == 0.25  ,  descr
 
+def test_algorythm_backward():
+    mode = "l_B"
+    ad = getAD(mode)
+    name = "test_algorythm_backward"
+    descr = f'test {name} mode {mode} failed '
+    (x, ONE, TWO) = (ad.D(0), ad.D(1), ad.D(2))
+    def babylon(x):
+        t = (ONE+x)/TWO
+        for i in range(0,100):
+            t = (t + x / t) / TWO 
+        return t
+
+    x.p = 4
+    y = babylon(x)
+    y.t = 1
+    ad.propagate()
+    assert y.p == 2  ,  descr
+    assert x.t == 1/4  ,  descr
+
 def test_algorythm_linear_forwad():
     ad = getAD("l_F")
     (x, ONE, TWO,THREE, FOUR) = (ad.D(2), ad.D(1), ad.D(2), ad.D(3), ad.D(4) )
@@ -53,7 +72,7 @@ def test_algorythm_linear_forwad():
     y = babylon(x)
     x.p = 2
     ad.propagate_from_to(* ad.get_from_to(x,y))
-    print("derivative wrt x of lambda x, y: x*y*y + y*x  at x y = 2 3: ",ad.get_from_to(y.t,x.t)[0] )
+    print("derivative wrt x of lambda x, y: x*y*y + y*x  at x y = 2 3: ",ad.get_from_to(x.t,y.t)[0] )
     #assert babylon_d(2) == 0.35355339059327373  ,  descr
     #assert babylon_d(4) == 0.25  ,  descr
     print(y.t)
@@ -68,7 +87,7 @@ def test_algorythm_linear_forwad():
 def test_algorythm_F():
     mode = "F"
     ad = getAD(mode)
-    name = "test_algorythm"
+    name = "test_algorythm_F"
     descr = f'test {name} mode {mode} failed '
     (x, ONE, TWO) = (ad.D(0), ad.D(1), ad.D(2))
     def babylon(x):
@@ -115,14 +134,23 @@ def test_wang(mode):
     assert ad.get_from_to(x2.t,y.t)[1]==1.1450754518266433, descr 
 
 def test_wang_linear_forward():
+    mode = "F"
+    ad = getAD(mode)
+    name = "test_wang_linear_forward"
+    descr = f'test {name} mode {mode} failed '
     ad = getAD("l_F")
     (x1, x2) = (ad.D(0.5), ad.D(0.4) )
     f = lambda x1, x2: tanh(x2*(x1+x2))
     y = f(x1,x2)
-    ad.propagate_from_to(* ad.get_from_to(x1,y))
-    print("derivative wrt x of lambda x, y: x*y*y + y*x  at x y = 2 3: ",ad.get_from_to(x1.t,y.t)[1])
-    ad.propagate_from_to(* ad.get_from_to(x2,y))
-    print("derivative wrt y of lambda x, y: x*y*y + y*x  at y y = 2 3: ", ad.get_from_to(x2.t,y.t)[1])
+    x1.t = 1
+    ad.propagate();
+    assert ad.get_from_to(x1.t,y.t)[1]==0.35233090825435176, descr 
+    ad.clear()
+    y = f(x1,x2)
+    x1.t = 0
+    x2.t = 1
+    ad.propagate();
+    assert ad.get_from_to(x2.t,y.t)[1]==1.1450754518266433, descr 
 
 def test_wang_backward():
     ad = getAD("l_B")
@@ -167,31 +195,32 @@ def test_transpose():
 
 
 
-def test_partial(mode):
+def test_partial():
+    mode = "l_B"
     ad = getAD(mode)
+    name = "test_partial"
+    descr = f'test {name} mode {mode} failed '
     (x, y) = (ad.D(2), ad.D(3) )
     f = lambda x, y:  x*y*y + y*x
     z = f(x,y)
-    #y.d = 0 # 9+3
-    ad.propagate_from_to(* ad.get_from_to(x,z))
-    print("derivative wrt x of lambda x, y: x*y*y + y*x  at x y = 2 3: ",ad.get_from_to(z.t,x.t)[0] )
-    #y.d = 1 # 2*2*3+2 
-    ad.propagate_from_to(* ad.get_from_to(y,z))
-    print("derivative wrt y of lambda x, y: x*y*y + y*x  at y y = 2 3: ", ad.get_from_to(z.t,y.t)[0])
+    z.t = 1
+    ad.propagate()
+    assert x.t==12, descr 
+    assert y.t==14, descr 
 
-def test_partial2(mode):
+def test_directional():
+    mode = "l_F"
     ad = getAD(mode)
+    name = "test_directional"
+    descr = f'test {name} mode {mode} failed '
     (x, y) = (ad.D(2), ad.D(3) )
     f = lambda x, y:  x*y*y + y*x
-    x.t = 1/2 
+    x.t = 1/2  # 9 +3 
     y.t = 1/2  # 12+2 
     z = f(x,y)
-    #y.d = 0 # 9+3
     ad.propagate()
-    print("derivative wrt x of lambda x, y: x*y*y + y*x  at x = 2: ", z.t)
-    #x.d = 0
-    #ad.propagate(z,y)
-    ##print("derivative wrt y of lambda x, y: x*y*y + y*x  at y = 3: ", y.d)
+    #print("derivative wrt x of lambda x, y: x*y*y + y*x  at x = 2: ", z.t)
+    assert z.t==13, descr 
 
 def test_partial3(mode):
     ad = getAD(mode)
@@ -226,12 +255,12 @@ test_algorythm_F()
 #test_algorythm("F")
 test_code("l_F")
 test_code("l_B")
-#test_partial("l_F")
-#test_partial("l_B")
-#test_partial2("l_F")
+test_partial()
+test_directional()
 #test_partial3("F")
 test_wang("l_B")
 test_wang("l_F")
+test_wang_linear_forward()
 #test_wang("F")
      #test_partial3("l_B")
 #test_partial1("l_F")
@@ -240,3 +269,4 @@ test_wang("l_F")
 #test_wang_linear_forward()
 #test_wang_backward()
 #test_algorythm_linear_forwad()
+test_algorythm_backward()
