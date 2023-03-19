@@ -16,6 +16,7 @@ Example usage:
     name = "test_algorythm_backward"
     descr = f'test {name} mode {mode} failed '
     (x, ONE, TWO) = (ad.D(0), ad.D(1), ad.D(2)) # instantiate some dual numbers
+
     def babylon(x):  # compute square root with babylon algorythm
         t = (ONE+x)/TWO
         for i in range(0,100):  # 100 iterations
